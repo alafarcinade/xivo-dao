@@ -18,6 +18,7 @@
 from sqlalchemy import and_
 from xivo_dao.alchemy.agentfeatures import AgentFeatures
 from xivo_dao.alchemy.callfiltermember import Callfiltermember
+from xivo_dao.alchemy.context import Context
 from xivo_dao.alchemy.contextinclude import ContextInclude
 from xivo_dao.alchemy.dialaction import Dialaction
 from xivo_dao.alchemy.linefeatures import LineFeatures
@@ -255,6 +256,28 @@ def get_context(session, user_id):
         return None
 
     return res.context
+
+
+@daosession
+def get_entity_context(session, user_id):
+    row = session.query(
+        LineFeatures.context,
+        Context.entity,
+    ).join(
+        UserLine, and_(
+            UserLine.line_id == LineFeatures.id,
+            UserLine.user_id == user_id,
+        )
+    ).join(
+        Context, LineFeatures.context == Context.name,
+    ).filter(
+        and_(
+            UserLine.main_line == True,
+            UserLine.main_user == True,
+        )
+    ).first()
+
+    return row.entity, row.context
 
 
 @daosession
