@@ -402,7 +402,7 @@ class TestSimpleSearch(TestSearch):
                                                   lastname='rogers',
                                                   mobile_phone_number='4185551234',
                                                   exten=user_line_row.extension.exten,
-                                                  context=None,
+                                                  context='foocontext',
                                                   entity=None)])
 
         self.assert_search_returns_result(expected, view='directory')
