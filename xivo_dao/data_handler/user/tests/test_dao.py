@@ -382,7 +382,9 @@ class TestSimpleSearch(TestSearch):
                                                   firstname='charles',
                                                   lastname=None,
                                                   mobile_phone_number=None,
-                                                  exten=None)])
+                                                  exten=None,
+                                                  context=None,
+                                                  entity=None)])
 
         self.assert_search_returns_result(expected, view='directory')
 
@@ -399,7 +401,9 @@ class TestSimpleSearch(TestSearch):
                                                   firstname='danny',
                                                   lastname='rogers',
                                                   mobile_phone_number='4185551234',
-                                                  exten=user_line_row.extension.exten)])
+                                                  exten=user_line_row.extension.exten,
+                                                  context=None,
+                                                  entity=None)])
 
         self.assert_search_returns_result(expected, view='directory')
 

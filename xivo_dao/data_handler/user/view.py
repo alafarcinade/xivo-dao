@@ -21,7 +21,7 @@ from xivo_dao.data_handler.utils.view import ViewSelector, View, ModelView
 from xivo_dao.data_handler.user.model import UserDirectory
 from xivo_dao.data_handler.user.database import db_converter
 
-from xivo_dao.alchemy import UserFeatures, LineFeatures, Extension, UserLine
+from xivo_dao.alchemy import UserFeatures, LineFeatures, Extension, UserLine, Entity
 
 
 class UserView(ModelView):
@@ -39,7 +39,9 @@ class DirectoryView(View):
                                UserFeatures.firstname.label('firstname'),
                                func.nullif(UserFeatures.lastname, '').label('lastname'),
                                func.nullif(UserFeatures.mobilephonenumber, '').label('mobile_phone_number'),
-                               Extension.exten.label('exten'))
+                               Extension.exten.label('exten'),
+                               LineFeatures.context.label('context'),
+                               Entity.name.label('entity'))
                  .outerjoin(UserLine,
                             and_(UserLine.user_id == UserFeatures.id))
                  .outerjoin(LineFeatures,
@@ -47,7 +49,9 @@ class DirectoryView(View):
                                  LineFeatures.commented == 0))
                  .outerjoin(Extension,
                             and_(Extension.id == UserLine.extension_id,
-                                 Extension.commented == 0)))
+                                 Extension.commented == 0))
+                 .outerjoin(Entity,
+                            and_(UserFeatures.entityid == Entity.id)))
         return query
 
     def convert(self, row):
@@ -57,7 +61,9 @@ class DirectoryView(View):
                              firstname=row.firstname,
                              lastname=row.lastname,
                              mobile_phone_number=row.mobile_phone_number,
-                             exten=row.exten)
+                             exten=row.exten,
+                             context=row.context,
+                             entity=row.entity)
 
 
 user_view = ViewSelector(default=UserView(),
